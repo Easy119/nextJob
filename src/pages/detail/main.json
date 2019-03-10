@@ -1,0 +1,8 @@
+{
+    "usingComponents": {
+        "van-goods-action": "/../../static/vant-weapp/dist/goods-action/index",
+        "van-goods-action-icon": "/../../static/vant-weapp/dist/goods-action-icon/index",
+        "van-goods-action-button": "/../../static/vant-weapp/dist/goods-action-button/index",
+        "van-toast": "/../../static/vant-weapp/dist/toast/index"
+    }
+}

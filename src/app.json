@@ -3,7 +3,8 @@
     "pages/index/main",
     "pages/car/main",
     "pages/userInfo/main",
-    "pages/kind/main"
+    "pages/kind/main",
+    "pages/detail/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
