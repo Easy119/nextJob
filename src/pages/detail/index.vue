@@ -37,7 +37,6 @@ export default {
   methods: {
     addShopCar(){
       // 差一步业务逻辑 关于 显示数据
-      this.prodcutContent.num = 1;
       globalStore.commit("addShopCarNum");
       globalStore.commit("addShopCar",this.prodcutContent);
       Toast.success('添加成功');

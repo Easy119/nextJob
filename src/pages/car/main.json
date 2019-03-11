@@ -6,6 +6,7 @@
         "van-checkbox": "/../../static/vant-weapp/dist/checkbox/index",
         "van-card": "/../../static/vant-weapp/dist/card/index",
         "van-swipe-cell": "/../../static/vant-weapp/dist/swipe-cell/index",
-        "van-dialog": "/../../static/vant-weapp/dist/dialog/index"
+        "van-dialog": "/../../static/vant-weapp/dist/dialog/index",
+        "van-toast": "/../../static/vant-weapp/dist/toast/index"
     }
 }

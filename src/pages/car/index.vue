@@ -4,14 +4,18 @@
     <ul>
       <li v-for="(item,index) in getShopCarContent" :key="index" class="car-item">
         <van-swipe-cell
-          id="swipe-cell"
+          :id= "item.sku"
           right-width="65"
           async-close
           @close="onClose"
-          style="background-color: red!important;"
         >
           <div class="de-swipe">
-            <van-checkbox :value="item.checked_flag" @change="userSelect(index) " :name="index" class="car-item-check"></van-checkbox>
+            <van-checkbox
+              :value="item.checked_flag"
+              @change="userSelect(index) "
+              :name="index"
+              class="car-item-check"
+            ></van-checkbox>
             <van-card :num="item.num" tag="热卖" :price="item.jp" :title="item.t" :thumb="item.img"></van-card>
           </div>
           <view slot="right" class="rightH">删除</view>
@@ -23,7 +27,7 @@
       <van-submit-bar
         :price="countMoney"
         button-text="提交订单"
-        bind:submit="onClickButton"
+        @submit="submitOrder"
         :tip="true"
       >
         <!-- <van-tag type="primary">标签</van-tag> -->
@@ -34,12 +38,14 @@
       </van-submit-bar>
       <!-- 消息提示 -->
       <van-dialog id="van-dialog"/>
+      <van-toast id="van-toast" />
     </div>
   </div>
 </template>
 
 <script>
 import globalStore from "../../stores/global_store";
+import Toast from '../../../static/vant-weapp/dist/toast/toast';
 import Dialog from "../../../static/vant-weapp/dist/dialog/dialog";
 export default {
   // 声明在当前组件下使用 counter-click 组件
@@ -47,33 +53,66 @@ export default {
   data() {
     return {
       checkedState: false,
-      getShopCarContent: [],
-      countMoney:4050
+      countMoney: 0
     };
   },
   created() {
     console.log(globalStore.state.ShopCar);
   },
-  computed: {},
+  computed: {
+    getShopCarContent() { // 获取购物车产品数量
+      return   globalStore.state.ShopCar
+    },
+    carItemNumber(){ //购物车的显示
+      return globalStore.state.carCount == 0 ? "" : globalStore.state.carCount.toString()
+    }
+  },
   methods: {
-    onChange() {
-      this.checkedState == true ? this.checkedState = false : this.checkedState = true;
+    userSelect(num) {
+      this.getShopCarContent[num].checked_flag == true
+        ? (this.getShopCarContent[num].checked_flag = false)
+        : (this.getShopCarContent[num].checked_flag = true);
+      this.is_all_checked();
+      this.getMoneyAll();
+      this.$forceUpdate(); // 牛逼的不行啊 强制渲染
     },
-     userSelect(num) {
-      this.getShopCarContent[num].checked_flag == true ? this.getShopCarContent[num].checked_flag = false : this.getShopCarContent[num].checked_flag = true;
-      this.getShopCarContent.map((item,index)=>{
-          index == num ? item.checked_flag = true : item.checked_flag = false;
-          return item
-      })
-      console.log( this.getShopCarContent)
-      // let obj = this.getShopCarContent[index];
-      // this.$set(obj,"checkedState","checked");
-      // console.log(this.getShopCarContent[index].checkedState)
+    getMoneyAll() {
+      let countMoneyAll = this.getShopCarContent.reduce((total, item) => {
+        if (item.checked_flag) {
+          return total + Number(item.jp) * Number(item.num);
+        } else {
+          return total + 0;
+        }
+      }, 0);
+      this.countMoney = countMoneyAll * 100;
     },
-    getShopCar() {},
+    allChange() {
+      // 全选
+      if (this.checkedState) {
+        this.checkedState = false;
+        this.getShopCarContent.forEach(item => (item.checked_flag = false));
+        this.getMoneyAll(); //算总计金额
+      } else {
+        this.checkedState = true;
+        this.getShopCarContent.forEach(item => (item.checked_flag = true));
+        this.getMoneyAll(); //算总计金额
+      }
+    },
+    is_all_checked() { // 判断是不是全选
+      // 获取 全部checked的 checked_flag的值
+      let checked_flag_true = this.getShopCarContent.reduce((count, item) => {
+        return count + Number(item.checked_flag);
+      }, 0);
+      // 获取 购物车产品种类
+      let getShopCar_length = this.getShopCarContent.length;
+      this.checkedState = checked_flag_true == getShopCar_length;
+    },
+    getShopCar() {
+
+    },
     onClose(event) {
-      console.log(event);
       const { position, instance } = event.mp.detail;
+      const { id } = event.mp.target;
       switch (position) {
         case "left":
         case "cell":
@@ -82,11 +121,29 @@ export default {
         case "right":
           Dialog.confirm({
             message: "确定删除吗？"
-          }).then(() => {
-            instance.close();
+          }).then((res) => {
+            this.deleteShopCar(id)
           });
           break;
       }
+    },
+    submitOrder(){
+       this.getShopCarContent.forEach((item) => {
+          if(item.checked_flag){
+            globalStore.commit("addOrderList",item)
+          }
+      });
+      if(globalStore.state.orderList.length > 0){
+         wx.navigateTo({
+          url:"../../pages/order/main"
+        })
+      } else {
+        Toast.fail('选择需要提交的订单');
+      }
+    },
+    deleteShopCar(id){
+      // 修改vuex数据
+      globalStore.commit("delShop",id)
     }
   },
   onLoad() {
@@ -97,14 +154,13 @@ export default {
   onShow() {
     wx.setTabBarBadge({
       index: 2,
-      text:
-        globalStore.state.carCount == 0
-          ? ""
-          : globalStore.state.carCount.toString()
+      text:this.carItemNumber
     });
-    this.getShopCarContent = globalStore.state.ShopCar.map(item=>{
-      item.checked_flag = false;
-      return item
+  },
+  updated () { // 用于更新tabber上面的 购物车数量显示
+    wx.setTabBarBadge({
+      index: 2,
+      text:this.carItemNumber
     });
   }
 };
@@ -117,7 +173,7 @@ export default {
   height: 230rpx;
   background-color: #fafafa;
 }
-.de-swipe{
+.de-swipe {
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -131,7 +187,7 @@ export default {
   display: inline-block;
   text-align: center;
   line-height: 230rpx;
-  background-color: #f44;
+  background-color: red;
 }
 #swipe-cell {
   background-color: red !important;

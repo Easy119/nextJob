@@ -1,0 +1,10 @@
+{
+    "usingComponents": {
+        "van-icon": "/../../../static/vant-weapp/dist/icon/index",
+        "van-card": "/../../static/vant-weapp/dist/card/index",
+        "van-cell": "/../../static/vant-weapp/dist/cell/index",
+        "van-cell-group": "/../../static/vant-weapp/dist/cell-group/index",
+        "van-submit-bar": "/../../static/vant-weapp/dist/submit-bar/index"
+
+      }
+}
