@@ -10,7 +10,7 @@
         <van-goods-action-icon icon="chat-o" text="客服" @click="onClickIcon"/>
         <van-goods-action-icon icon="cart-o" text="购物车" @click="toShopCar" :info="carShopNum"/>
         <van-goods-action-button text="加入购物车" type="warning" @click="addShopCar"/>
-        <van-goods-action-button text="立即购买" @click="onClickButton"/>
+        <van-goods-action-button text="立即购买" @click="nowBuy"/>
       </van-goods-action>
     </div>
     <!-- toast -->
@@ -45,6 +45,16 @@ export default {
       wx.switchTab({
         url:"../../pages/car/main"
       })
+    },
+    nowBuy(){
+      let newArr = [];
+      this.prodcutContent.num = 1;
+      this.prodcutContent.checked_flag = true;
+      newArr.push(this.prodcutContent);
+      globalStore.commit("addOrderList",newArr);
+       wx.navigateTo({
+          url:"../../pages/order/main"
+        })
     }
   },
   onLoad() {
