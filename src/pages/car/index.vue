@@ -128,12 +128,13 @@ export default {
       }
     },
     submitOrder(){
-       this.getShopCarContent.forEach((item) => {
+      let newArr =  this.getShopCarContent.filter((item) => {
           if(item.checked_flag){
-            globalStore.commit("addOrderList",item)
+           return item
           }
       });
-      if(globalStore.state.orderList.length > 0){
+      if(newArr.length > 0){
+        globalStore.commit("addOrderList",newArr) // 绑定 订单信息
          wx.navigateTo({
           url:"../../pages/order/main"
         })
@@ -156,6 +157,10 @@ export default {
       index: 2,
       text:this.carItemNumber
     });
+    this.getShopCarContent.forEach((item) => {
+        item.checked_flag = false
+    });
+    this.checkedState = false;
   },
   updated () { // 用于更新tabber上面的 购物车数量显示
     wx.setTabBarBadge({

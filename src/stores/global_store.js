@@ -11,8 +11,8 @@ export default new Vuex.Store({
     ShopCar: []
   },
   mutations: {
-    addOrderList(state,item){
-      state.orderList.push(item);
+    addOrderList(state,opts){
+      state.orderList = opts
     },
     addShopCarNum: (state) => {
       state.carCount += 1
