@@ -22,8 +22,13 @@
         </van-swipe-cell>
       </li>
     </ul>
+    <!-- 没有商品的友情提示 -->
+    <div class="no_goods" v-if="getShopCarContent.length == 0">
+      <img src="../../../static/imgage/car.png" alt="">
+      <p>购物车空空如也，去逛逛吧~</p>
+    </div>
     <!-- 底部导航 -->
-    <div class="carFooter">
+    <div class="carFooter" v-if="getShopCarContent.length != 0">
       <van-submit-bar
         :price="countMoney"
         button-text="提交订单"
@@ -139,7 +144,7 @@ export default {
           url:"../../pages/order/main"
         })
       } else {
-        Toast.fail('选择需要提交的订单');
+        Toast.fail("没有可以提交的订单");
       }
     },
     deleteShopCar(id){
@@ -196,6 +201,27 @@ export default {
 }
 #swipe-cell {
   background-color: red !important;
+}
+/* no_goods */
+.no_goods{
+  height: 360rpx;;
+  width: 100%;
+  padding: 60rpx 0;
+  box-sizing: border-box;
+  background-color: #fff;
+  margin: 100rpx 0;
+}
+.no_goods img{
+  display: block;
+  width: 180rpx;
+  height: 180rpx;
+  margin: 0 auto;
+}
+.no_goods p{
+  font-size: 14px;
+  line-height: 28rpx;
+  text-align: center;
+  margin-top: 60rpx;
 }
 /* 底部导航 */
 .carFooter {

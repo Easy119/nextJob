@@ -1,0 +1,6 @@
+{
+    "usingComponents": {
+        "van-badge": "/../../../static/vant-weapp/dist/badge/index",
+        "van-badge-group": "/../../../static/vant-weapp/dist/badge-group/index"
+      }
+}

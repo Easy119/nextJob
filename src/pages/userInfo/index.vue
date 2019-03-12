@@ -56,6 +56,14 @@ export default {
     wx.setNavigationBarTitle({
       title: "我的"
     });
+    wx.setNavigationBarColor({
+      frontColor: '#ffffff',
+      backgroundColor: '#3CB371',
+      animation: {
+        duration: 400,
+        timingFunc: 'easeIn'
+      }
+    })
 
    
   }
